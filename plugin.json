@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "prometheus-metrics",
+  "name": "Prometheus Metrics",
+  "description": "Read-only Kubernetes deployment metrics, ownership mapping and evidence collection from Prometheus.",
+  "owner": "consize-oss",
+  "license": "Apache-2.0",
+  "category": "metrics",
+  "capabilities": ["metrics.read"],
+  "protocol": 1,
+  "platforms": ["darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64"],
+  "source": "https://github.com/consize-oss/consize-prometheus-plugin",
+  "documentation": "https://github.com/consize-oss/consize-prometheus-plugin#readme",
+  "support": "https://github.com/consize-oss/consize-prometheus-plugin/issues",
+  "releases": "https://github.com/consize-oss/consize-prometheus-plugin/releases",
+  "catalog_url": "https://github.com/consize-oss/consize-prometheus-plugin/releases/latest/download/catalog.json",
+  "public_key_url": "https://raw.githubusercontent.com/consize-oss/consize-prometheus-plugin/main/keys/publisher.pub",
+  "configuration_schema": "config.schema.json",
+  "core_revision": "e196f1e160920f7cdec394665d051251311bad08",
+  "status": "experimental"
+}

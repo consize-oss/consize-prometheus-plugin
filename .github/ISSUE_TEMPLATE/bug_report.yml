@@ -1,0 +1,23 @@
+name: Bug report
+description: Report a plugin, installation or collection problem
+body:
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions and platform
+      description: Plugin version, Consize core revision, operating system and architecture
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction and redacted diagnostics
+      description: Remove credentials, tokens, certificate keys and private endpoint details.
+    validations:
+      required: true

@@ -1,0 +1,57 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      GOWORK: off
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: .go-version
+          cache: true
+      - name: Validate tag is on main and signing key is configured
+        env:
+          SIGNING_KEY: ${{ secrets.CONSIZE_CATALOG_PRIVATE_KEY }}
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          test -n "$SIGNING_KEY"
+      - name: Install checksum-pinned Prometheus test server
+        run: bash scripts/ci/install-prometheus-test.sh "$RUNNER_TEMP/prometheus" >> "$GITHUB_ENV"
+      - run: go test -race -timeout 5m ./... && go vet ./...
+      - run: go run ./cmd/configschema -check
+      - name: Build and sign immutable release assets
+        env:
+          CONSIZE_CATALOG_PRIVATE_KEY: ${{ secrets.CONSIZE_CATALOG_PRIVATE_KEY }}
+        run: go run ./cmd/releasectl package -version "${GITHUB_REF_NAME#v}" -private-key-env CONSIZE_CATALOG_PRIVATE_KEY
+      - run: go run ./cmd/releasectl verify
+      - name: Publish only after every artifact passes verification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --draft --title "$GITHUB_REF_NAME" --notes-file docs/release-notes.md
+          gh release edit "$GITHUB_REF_NAME" --draft=false --latest
+      - name: Verify public discovery and native download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir "$RUNNER_TEMP/downloaded"
+          gh release download "$GITHUB_REF_NAME" --dir "$RUNNER_TEMP/downloaded"
+          go run ./cmd/releasectl verify -dir "$RUNNER_TEMP/downloaded"
+          go run ./cmd/consize-pluginctl catalog -catalog "https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/catalog.json" -public-key keys/publisher.pub
+          go run ./cmd/consize-pluginctl install -catalog "https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/catalog.json" -public-key keys/publisher.pub -id prometheus-metrics -version "${GITHUB_REF_NAME#v}" -dir "$RUNNER_TEMP/installed"
+          go run ./cmd/consize-pluginctl check -dir "$RUNNER_TEMP/installed/prometheus-metrics-${GITHUB_REF_NAME#v}-linux-amd64" -public-key keys/publisher.pub

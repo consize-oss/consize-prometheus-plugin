@@ -1,0 +1,17 @@
+{
+  "prometheus": {"enabled": false},
+  "external_plugins": [{
+    "directory": "/opt/consize/plugins/prometheus-metrics-0.1.0-linux-amd64",
+    "public_key_path": "/etc/consize/publisher.pub",
+    "config": {
+      "base_url": "https://prometheus.example.com",
+      "window": "24h",
+      "step": "5m",
+      "transport": {
+        "auth": {"bearer_token_file": "/run/secrets/prometheus-token"},
+        "request_timeout": "10s",
+        "query_timeout": "8s"
+      }
+    }
+  }]
+}

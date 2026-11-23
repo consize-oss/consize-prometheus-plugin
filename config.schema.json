@@ -1,0 +1,148 @@
+{
+  "$id": "https://raw.githubusercontent.com/consize-oss/consize-prometheus-plugin/main/config.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Strict subprocess configuration. Duration, endpoint and mapping constraints are also validated by the plugin. File credentials only; the host strips credential environment variables.",
+  "properties": {
+    "base_url": {
+      "format": "uri",
+      "type": "string"
+    },
+    "mapping": {
+      "additionalProperties": false,
+      "properties": {
+        "cluster": {
+          "type": "string"
+        },
+        "container": {
+          "type": "string"
+        },
+        "controller": {
+          "type": "string"
+        },
+        "deployment": {
+          "type": "string"
+        },
+        "deployment_uid": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "owner_kind": {
+          "type": "string"
+        },
+        "owner_name": {
+          "type": "string"
+        },
+        "pod": {
+          "type": "string"
+        },
+        "pod_uid": {
+          "type": "string"
+        },
+        "replicaset": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "minimum_samples": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "percentile": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "queries": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "step": {
+      "default": "5m",
+      "type": "string"
+    },
+    "transport": {
+      "additionalProperties": false,
+      "properties": {
+        "auth": {
+          "additionalProperties": false,
+          "properties": {
+            "bearer_token_file": {
+              "type": "string"
+            },
+            "password_file": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "max_response_bytes": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "max_samples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "max_series": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "query_timeout": {
+          "type": "string"
+        },
+        "request_timeout": {
+          "type": "string"
+        },
+        "retry_attempts": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "retry_backoff": {
+          "type": "string"
+        },
+        "tls": {
+          "additionalProperties": false,
+          "properties": {
+            "ca_file": {
+              "type": "string"
+            },
+            "cert_file": {
+              "type": "string"
+            },
+            "key_file": {
+              "type": "string"
+            },
+            "server_name": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "units": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "window": {
+      "default": "24h",
+      "type": "string"
+    }
+  },
+  "required": [
+    "base_url"
+  ],
+  "title": "Consize Prometheus plugin configuration",
+  "type": "object"
+}
