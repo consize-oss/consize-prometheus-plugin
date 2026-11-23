@@ -76,9 +76,6 @@
           "properties": {
             "bearer_token_file": {
               "type": "string"
-            },
-            "password_file": {
-              "type": "string"
             }
           },
           "type": "object"

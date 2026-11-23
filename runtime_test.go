@@ -115,4 +115,10 @@ func TestMarketplaceRuntime(t *testing.T) {
 	if health := metrics.Health(context.Background()); health.Status != "healthy" {
 		t.Fatalf("health: %+v", health)
 	}
+	if err := os.WriteFile(binary, append(data, '!'), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := marketplace.Load(marketplace.ExternalConfig{Directory: dir, PublicKeyPath: keyPath, Config: config}); err == nil {
+		t.Fatal("tampered installed executable was accepted")
+	}
 }

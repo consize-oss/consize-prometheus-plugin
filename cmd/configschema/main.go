@@ -51,7 +51,7 @@ func schemaFor(t reflect.Type) map[string]any {
 		for i := 0; i < t.NumField(); i++ {
 			field := t.Field(i)
 			name := strings.Split(field.Tag.Get("json"), ",")[0]
-			if name == "" || name == "-" || strings.HasSuffix(name, "_env") {
+			if name == "" || name == "-" || name == "password_file" || strings.HasSuffix(name, "_env") {
 				continue
 			}
 			properties[name] = schemaFor(field.Type)

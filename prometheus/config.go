@@ -48,8 +48,8 @@ func FromJSON(raw json.RawMessage) (plugin.Plugin, error) {
 	}
 	// The host deliberately strips ambient environment secrets. File references
 	// are usable by the subprocess; environment references would silently fail.
-	if cfg.Transport.Auth.BearerTokenEnv != "" || cfg.Transport.Auth.UsernameEnv != "" || cfg.Transport.Auth.PasswordEnv != "" || len(cfg.Transport.HeaderEnv) != 0 {
-		return nil, fmt.Errorf("external plugins require file-based authentication; environment references are unavailable")
+	if cfg.Transport.Auth.BearerTokenEnv != "" || cfg.Transport.Auth.UsernameEnv != "" || cfg.Transport.Auth.PasswordEnv != "" || cfg.Transport.Auth.PasswordFile != "" || len(cfg.Transport.HeaderEnv) != 0 {
+		return nil, fmt.Errorf("external plugins support bearer-token files and TLS; basic authentication and environment references are unavailable")
 	}
 	return New(Config{BaseURL: cfg.BaseURL, Window: window, Step: step, Queries: cfg.Queries, Units: cfg.Units, Transport: cfg.Transport, Mapping: cfg.Mapping, Percentile: cfg.Percentile, MinimumSamples: cfg.MinimumSamples})
 }
