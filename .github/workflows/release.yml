@@ -13,6 +13,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
+      actions: read
     env:
       GOWORK: off
     steps:
@@ -30,6 +31,12 @@ jobs:
         run: |
           git merge-base --is-ancestor HEAD origin/main
           test -n "$SIGNING_KEY"
+      - name: Require successful Linux and macOS CI for this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          successes=$(gh run list --workflow ci.yml --branch main --commit "$GITHUB_SHA" --json conclusion --jq '[.[] | select(.conclusion == "success")] | length')
+          test "$successes" -gt 0
       - name: Install checksum-pinned Prometheus test server
         run: bash scripts/ci/install-prometheus-test.sh "$RUNNER_TEMP/prometheus" >> "$GITHUB_ENV"
       - run: go test -race -timeout 5m ./... && go vet ./...
